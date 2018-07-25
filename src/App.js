@@ -1,30 +1,66 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from 'react'
+import './App.css'
 import fetchData from './app/APIConnector/fetchData'
 import calculator from './app/Calculator/Calculator'
 
 
 class App extends Component {
   state = {
-    apiRes: 'hehe'
+    apiRes: [],
+    output: [],
+    isAppReady: false
   }
-  async componentWillMount() {
-    const res = await fetchData();
-    this.setState({
-      apiRes: res
+
+  componentWillMount() {
+    this.prepareData()
+  }
+
+  prepareData = async () => {
+    const res = await fetchData()
+    let output = []
+
+    res.RPN_data.map(({ task }) => output.push(task))
+
+    output = output.map((e) => {
+      return { input: e, answer: calculator(e) }
     })
-    console.log(calculator(res.RPN_data[1].task))
+
+
+    this.setState({
+      output,
+      apiRes: res.RPN_data,
+      isAppReady: true
+    })
+  }
+
+  renderData = (output) => {
+    if (output.length === 0) {
+      return <h1>ERROR</h1>
+    }
+
+    return output.map(x => this.renderOutput(x))
+  }
+
+  renderOutput = ({ input, answer }) => {
+    return (
+      <div key={input}>
+        {input} =
+        <h1>{answer}</h1>
+      </div>
+    )
   }
 
   render() {
-    const { apiRes } = this.state;
+    const { output, isAppReady } = this.state
 
     return (
       <div>
-        {apiRes.hasOwnProperty('RPN_data') ? apiRes.RPN_data[0].task : apiRes}
+        {isAppReady ?
+          this.renderData(output) : 'Loading'
+        }
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
