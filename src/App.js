@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import fetchData from './app/APIConnector/fetchData'
+import calculator from './app/Calculator/Calculator'
 
 
 class App extends Component {
@@ -12,6 +13,7 @@ class App extends Component {
     this.setState({
       apiRes: res
     })
+    console.log(calculator(res.RPN_data[1].task))
   }
 
   render() {
