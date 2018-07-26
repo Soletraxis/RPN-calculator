@@ -2,17 +2,20 @@ import React, { Component } from 'react'
 import './App.css'
 import fetchData from './app/APIConnector/fetchData'
 import calculator from './app/Calculator/Calculator'
+import Button from './app/components/button'
 
 
 class App extends Component {
   state = {
     apiRes: [],
     output: [],
-    isAppReady: false
+    isAppReady: false,
+    showData: false
   }
 
   componentWillMount() {
     this.prepareData()
+    document.title = 'This App is like ass - nice'
   }
 
   prepareData = async () => {
@@ -30,6 +33,11 @@ class App extends Component {
       output,
       apiRes: res.RPN_data,
       isAppReady: true
+    })
+  }
+  handleClick = () => {
+    this.setState(prevState => {
+      return { showData: !prevState.showData }
     })
   }
 
@@ -51,12 +59,21 @@ class App extends Component {
   }
 
   render() {
-    const { output, isAppReady } = this.state
+    const { output, isAppReady, showData } = this.state
 
     return (
       <div>
         {isAppReady ?
-          this.renderData(output) : 'Loading'
+          <div>
+            <Button
+              title={showData ? 'Press to hide output' : 'Press to show output'}
+              onClick={() => this.handleClick()}
+            />
+            {showData &&
+            this.renderData(output)}
+          </div>
+
+          : 'Loading'
         }
       </div>
     )
